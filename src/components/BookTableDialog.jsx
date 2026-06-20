@@ -50,7 +50,7 @@ const BookTableDialog = ({ trigger }) => {
   }, [user, open]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/settings")
+    fetch(`${import.meta.env.VITE_API_URL}/api/settings`)
       .then(res => res.json())
       .then(data => setSettings(data))
       .catch(err => console.error("Error fetching settings:", err));
@@ -157,7 +157,7 @@ const BookTableDialog = ({ trigger }) => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/reservations", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/reservations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext(null);
 const TOKEN_KEY = "indigo_auth_token";
-const API_URL = "http://localhost:5000/api/users";
+const API_URL = `${import.meta.env.VITE_API_URL}/api/users`;
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

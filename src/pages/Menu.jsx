@@ -85,7 +85,7 @@ const Menu = () => {
   const [selectedVariants, setSelectedVariants] = useState({});
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/menu")
+    fetch(`${import.meta.env.VITE_API_URL}/api/menu`)
       .then((res) => res.json())
       .then((data) => {
         setCategories(data);

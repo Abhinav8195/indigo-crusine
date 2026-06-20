@@ -44,14 +44,14 @@ const Profile = () => {
     // Fetch History
     const token = localStorage.getItem("indigo_auth_token");
     
-    fetch("http://localhost:5000/api/users/orders", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/users/orders`, {
       headers: { "x-auth-token": token }
     })
       .then(res => res.json())
       .then(data => setOrders(Array.isArray(data) ? data : []))
       .catch(console.error);
 
-    fetch("http://localhost:5000/api/users/reservations", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/users/reservations`, {
       headers: { "x-auth-token": token }
     })
       .then(res => res.json())
@@ -59,7 +59,7 @@ const Profile = () => {
       .catch(console.error);
 
     // Socket Connection for live updates
-    const socket = io("http://localhost:5000");
+    const socket = io(`${import.meta.env.VITE_API_URL}`);
     
     socket.on('order_status_updated', (updatedOrder) => {
       setOrders(prevOrders => 
@@ -86,7 +86,7 @@ const Profile = () => {
     e.preventDefault();
     const token = localStorage.getItem("indigo_auth_token");
     try {
-      const res = await fetch("http://localhost:5000/api/users/profile", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
