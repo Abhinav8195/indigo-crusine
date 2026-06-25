@@ -81,6 +81,7 @@ const Menu = () => {
   const { addItem } = useCart();
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState(null);
+  const [activeMainCategory, setActiveMainCategory] = useState("Food");
   const [loading, setLoading] = useState(true);
   const [selectedVariants, setSelectedVariants] = useState({});
 
@@ -89,7 +90,6 @@ const Menu = () => {
       .then((res) => res.json())
       .then((data) => {
         setCategories(data);
-        if (data.length > 0) setActiveCategory(data[0]._id);
         setLoading(false);
       })
       .catch((err) => {
@@ -98,6 +98,23 @@ const Menu = () => {
         setLoading(false);
       });
   }, []);
+
+  const filteredCategories = categories.filter(
+    (cat) => (cat.mainCategory || "Food") === activeMainCategory
+  );
+
+  useEffect(() => {
+    const filtered = categories.filter(
+      (cat) => (cat.mainCategory || "Food") === activeMainCategory
+    );
+    if (filtered.length > 0) {
+      if (!filtered.some((c) => c._id === activeCategory)) {
+        setActiveCategory(filtered[0]._id);
+      }
+    } else {
+      setActiveCategory(null);
+    }
+  }, [activeMainCategory, categories]);
 
   const handleAdd = (item) => {
     if (item.variants && item.variants.length > 0) {
@@ -207,28 +224,62 @@ const Menu = () => {
 
       <section className="py-12">
         <div className="container mx-auto px-4">
-          <div className="sticky top-20 z-40 bg-background/95 backdrop-blur-md py-4 mb-8 -mx-4 px-4 border-b border-border">
-            <div className="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-              <div className="flex space-x-2 min-w-max">
-                {categories.map((cat) => (
-                  <button
-                    key={cat._id}
-                    onClick={() => setActiveCategory(cat._id)}
-                    className={`px-4 py-2 rounded-full font-medium transition-all duration-300 whitespace-nowrap ${
-                      activeCategory === cat._id
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-                    }`}
-                  >
-                    {cat.name}
-                  </button>
-                ))}
-              </div>
-            </div>
+          {/* Main Category Sub-headings */}
+          <div className="flex justify-center gap-4 mb-12 flex-wrap">
+            {["Food", "Drinks", "Kids"].map((mainCat) => {
+              const isActive = activeMainCategory === mainCat;
+              return (
+                <button
+                  key={mainCat}
+                  onClick={() => setActiveMainCategory(mainCat)}
+                  className={`px-8 py-3 rounded-full text-lg font-serif font-bold tracking-wider transition-all duration-300 relative ${
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
+                      : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground border border-border"
+                  }`}
+                >
+                  {mainCat}
+                  {isActive && (
+                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-primary" />
+                  )}
+                </button>
+              );
+            })}
           </div>
 
+          {/* Sub-Category Navigation */}
+          {filteredCategories.length > 0 ? (
+            <div className="sticky top-20 z-40 bg-background/95 backdrop-blur-md py-4 mb-8 -mx-4 px-4 border-b border-border">
+              <div className="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div className="flex space-x-2 min-w-max">
+                  {filteredCategories.map((cat) => (
+                    <button
+                      key={cat._id}
+                      onClick={() => setActiveCategory(cat._id)}
+                      className={`px-4 py-2 rounded-full font-medium transition-all duration-300 whitespace-nowrap ${
+                        activeCategory === cat._id
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+                      }`}
+                    >
+                      {cat.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : null}
+
           <Card className="bg-card border-border">
-            <CardContent className="p-6 md:p-8">{renderCategory(activeCategory)}</CardContent>
+            <CardContent className="p-6 md:p-8">
+              {activeCategory ? (
+                renderCategory(activeCategory)
+              ) : (
+                <div className="text-center py-16 text-muted-foreground font-serif text-xl">
+                  No options available under {activeMainCategory} right now.
+                </div>
+              )}
+            </CardContent>
           </Card>
 
           <div className="mt-8 p-6 bg-muted rounded-lg">
