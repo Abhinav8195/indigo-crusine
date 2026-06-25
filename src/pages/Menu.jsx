@@ -3,7 +3,7 @@ import Layout from "../components/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Utensils, GlassWater, Baby } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
 
@@ -77,6 +77,12 @@ const getIngredients = (name) => {
   return hit ? hit.ing : "Traditional Punjabi spices and fresh ingredients";
 };
 
+const mainCatIcons = {
+  Food: Utensils,
+  Drinks: GlassWater,
+  Kids: Baby
+};
+
 const Menu = () => {
   const { addItem } = useCart();
   const [categories, setCategories] = useState([]);
@@ -131,7 +137,7 @@ const Menu = () => {
       {items.map((item, index) => (
         <div
           key={index}
-          className="group/item relative flex items-start gap-4 py-4 px-3 rounded-lg border-b border-border last:border-0 transition-colors hover:bg-muted/40"
+          className="group/item relative flex items-start gap-4 py-3 px-3 rounded-lg border-b border-border last:border-0 transition-all duration-300 hover:bg-muted/40 pl-3 border-l-2 border-l-transparent hover:border-l-primary hover:pl-5"
         >
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
@@ -176,7 +182,7 @@ const Menu = () => {
               size="sm"
               variant="outline"
               onClick={() => handleAdd(item)}
-              className="opacity-70 group-hover/item:opacity-100 transition-opacity gap-1"
+              className="opacity-80 group-hover/item:opacity-100 transition-all duration-300 gap-1 border-primary/30 hover:border-primary hover:bg-primary hover:text-primary-foreground"
             >
               <Plus className="w-3 h-3" /> Add
             </Button>
@@ -191,7 +197,7 @@ const Menu = () => {
     if (!data) return null;
     return (
       <div>
-        <div className="mb-8">
+        <div className="mb-4">
           <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-2">{data.name}</h2>
           {data.description && <p className="text-muted-foreground text-lg">{data.description}</p>}
         </div>
@@ -212,36 +218,35 @@ const Menu = () => {
 
   return (
     <Layout>
-      <section className="relative py-20 bg-card">
+      <section className="relative py-10 bg-card">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-primary font-medium tracking-widest uppercase text-sm mb-4">Authentic Punjabi Cuisine</p>
-          <h1 className="font-serif text-5xl md:text-6xl font-bold text-foreground mb-6">Our Menu</h1>
-          <p className="text-muted-foreground text-xl max-w-2xl mx-auto">
+          <p className="text-primary font-medium tracking-widest uppercase text-sm mb-2">Authentic Punjabi Cuisine</p>
+          <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-3">Our Menu</h1>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Hover over any dish to reveal its ingredients, then add it straight to your cart.
           </p>
         </div>
       </section>
 
-      <section className="py-12">
+      <section className="py-6">
         <div className="container mx-auto px-4">
           {/* Main Category Sub-headings */}
-          <div className="flex justify-center gap-4 mb-12 flex-wrap">
+          <div className="flex justify-start gap-4 mb-6 flex-wrap">
             {["Food", "Drinks", "Kids"].map((mainCat) => {
               const isActive = activeMainCategory === mainCat;
+              const Icon = mainCatIcons[mainCat];
               return (
                 <button
                   key={mainCat}
                   onClick={() => setActiveMainCategory(mainCat)}
-                  className={`px-8 py-3 rounded-full text-lg font-serif font-bold tracking-wider transition-all duration-300 relative ${
+                  className={`px-5 py-2.5 rounded-full text-base font-medium transition-all duration-300 relative flex items-center gap-2 ${
                     isActive
                       ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
                       : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground border border-border"
                   }`}
                 >
-                  {mainCat}
-                  {isActive && (
-                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-primary" />
-                  )}
+                  {Icon && <Icon className="w-4 h-4" />}
+                  <span>{mainCat}</span>
                 </button>
               );
             })}
@@ -249,14 +254,14 @@ const Menu = () => {
 
           {/* Sub-Category Navigation */}
           {filteredCategories.length > 0 ? (
-            <div className="sticky top-20 z-40 bg-background/95 backdrop-blur-md py-4 mb-8 -mx-4 px-4 border-b border-border">
+            <div className="sticky top-20 z-40 bg-background/95 backdrop-blur-md py-2 mb-4 -mx-4 px-4 border-b border-border">
               <div className="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 <div className="flex space-x-2 min-w-max">
                   {filteredCategories.map((cat) => (
                     <button
                       key={cat._id}
                       onClick={() => setActiveCategory(cat._id)}
-                      className={`px-4 py-2 rounded-full font-medium transition-all duration-300 whitespace-nowrap ${
+                      className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap ${
                         activeCategory === cat._id
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
@@ -271,7 +276,7 @@ const Menu = () => {
           ) : null}
 
           <Card className="bg-card border-border">
-            <CardContent className="p-6 md:p-8">
+            <CardContent className="p-4 md:p-6">
               {activeCategory ? (
                 renderCategory(activeCategory)
               ) : (
